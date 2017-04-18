@@ -41,7 +41,4 @@ void CSMain (uint3 id : SV_DispatchThreadID)
 	value[id.x].vel.y = tv;
 	value[id.x].pos.x = xp;
 	value[id.x].pos.y = tp;
-
-	
-
 }

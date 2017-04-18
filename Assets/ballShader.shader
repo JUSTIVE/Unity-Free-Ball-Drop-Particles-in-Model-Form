@@ -1,6 +1,15 @@
-﻿Shader "Unlit/ballShader"
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+Shader "Custom"
 {
+	Properties
+	{
+		_MainTex("Texture", 2D) = "white" {}
+	}
 	SubShader{
+		Tags{ "RenderType" = "Opaque" }
+		LOD 100
+
 		Pass{
 		// Upgrade NOTE: excluded shader from DX11 and Xbox360; has structs without semantics (struct v2f members pos,col)
 			CGPROGRAM
@@ -20,6 +29,7 @@
 			struct v2f {
 				float4 pos : SV_POSITION;
 				float3 col : COLOR0;
+				float2 uv : TEXCOORD0;
 			};
 			float x, y, z;
 			StructuredBuffer<Point> value;
@@ -27,7 +37,7 @@
 			v2f vert(uint id : SV_VertexID){
 				v2f o;
 				float3 worldPos = value[id].pos;
-				o.pos = mul(UNITY_MATRIX_MVP, worldPos);
+				o.pos = UnityObjectToClipPos(worldPos);
 				o.col.x = (sin((0.3*float(o.pos.x*30))) * 127 + 128) / 255.0f;
 				o.col.y = (sin((0.3*float(o.pos.x*30)) +2) * 127 + 128) / 255.0f;
 				o.col.z = (sin((0.3*float(o.pos.x*30)) + 4) * 127 + 128) / 255.0f;

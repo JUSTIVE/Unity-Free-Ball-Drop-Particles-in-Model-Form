@@ -257,12 +257,12 @@ public class isMyball : MonoBehaviour
         //    index = index > 5 ? 0 : index + 1;
         //    init();
         //}
-        //cBuff.GetData(value);
+        cBuff.GetData(value);
         //GameObject gb = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         //gb.transform.position.Set(value[0].pos.x, value[0].pos.y, value[0].pos.z);
         //gb.transform.lossyScale.Set(0.01f, 0.01f, 0.01f);
         //gb = null;
-        //Debug.Log(value[0].pos.x + " " + value[0].pos.y + " " + value[0].pos.z);
+        Debug.Log(value[0].pos.x + " " + value[0].pos.y + " " + value[0].pos.z+"\n");
         //Debug.Log()
     }
 }
