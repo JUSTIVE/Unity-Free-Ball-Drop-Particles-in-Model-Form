@@ -214,7 +214,7 @@ public class isMyball : MonoBehaviour
         cBuff.SetData(value);
         mat.SetBuffer("value", cBuff);
         cShader.SetBuffer(kernelHandle, "value", cBuff);
-
+        cShader.SetVector("sphere1",new Vector4(0,-1.1f,0.21f,0.0f));
     }
     
     private void OnPostRender()

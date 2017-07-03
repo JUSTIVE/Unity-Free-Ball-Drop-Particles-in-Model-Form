@@ -9,7 +9,10 @@ struct data{
 
 //shareing buffer variables 
 RWStructuredBuffer<data> value;
+
+float3 sphere1;
 //local workgroup size
+
 
 [numthreads(6,1,1)]
 void CSMain (uint3 id : SV_DispatchThreadID)
@@ -41,4 +44,10 @@ void CSMain (uint3 id : SV_DispatchThreadID)
 	value[id.x].vel.y = tv;
 	value[id.x].pos.x = xp;
 	value[id.x].pos.y = tp;
+
+    if (distance(value[id.x].pos, float3(sphere1.xyz)) < 0.25f)
+    {
+        float3 f = value[id.x].pos - sphere1.xyz;
+        value[id.x].vel = normalize(normalize(float4(f, 1.0f)) + value[id.x].vel);
+    }
 }
