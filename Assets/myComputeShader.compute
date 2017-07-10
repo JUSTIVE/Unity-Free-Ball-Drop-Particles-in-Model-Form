@@ -5,6 +5,7 @@
 struct data{
 	float3 pos;
 	float3 vel;
+    float mass;
 };
 
 //shareing buffer variables 
@@ -12,42 +13,79 @@ RWStructuredBuffer<data> value;
 
 float3 sphere1;
 //local workgroup size
-
+float deltaT;
 
 [numthreads(6,1,1)]
 void CSMain (uint3 id : SV_DispatchThreadID)
 {
-	float deltaT = 0.001f;
-	float boundary = -0.95f;
-
-	float tp = value[id.x].pos.y;
-	float tv = value[id.x].vel.y;
-
-	float xp = value[id.x].pos.x;
-	float xv = value[id.x].vel.x;
 	
-	if (xv > 0.0f) {
-		//xv -= 0.005f;
-	}
-	//update velocity
-	tv = tv - (9.81f*deltaT);
-	//xv -= 0.00005;
-	//update position
-	xp += (xv*deltaT);
-	tp = tp + (tv*deltaT);
-	if (tp < boundary) {
-		tv = tv*-0.9f;
-		tp = boundary;
-		//xv = 0.1;
-	}
-	value[id.x].vel.x = xv;
-	value[id.x].vel.y = tv;
-	value[id.x].pos.x = xp;
-	value[id.x].pos.y = tp;
+	float boundary = -0.995f;
+    float3 force;
+    float3 gravity = float3(0, -9.81f, 0);
 
-    if (distance(value[id.x].pos, float3(sphere1.xyz)) < 0.25f)
+	float3 p = value[id.x].pos;
+	float3 v = value[id.x].vel;
+	
+
+    float3 acc= gravity/value[id.x].mass;
+	//update velocity 
+    //Implicit Euler
+    /*
+    v += acc* deltaT;
+	p += (v*deltaT);
+    /*/
+    // in forth Runge-Kutta
+
+
+    float3 K1_Vel = gravity;//t0의 가속도
+    float3 K2_Vel = ((v) + (0.5f * deltaT) * K1_Vel) * deltaT; //1/2dt 의 가속도
+    float3 K3_Vel = (v + (0.5f * deltaT) * K1_Vel + (0.5f * deltaT) * K2_Vel) * deltaT;
+    float3 K4_Vel = ((v) + deltaT * K3_Vel) * deltaT;
+    
+    float3 K1_Pos = v;
+    float3 K2_Pos = (p + (0.5f * deltaT) * K1_Pos)*deltaT;
+    float3 K3_Pos = (p + (0.5f * deltaT) * K1_Pos + (0.5f * deltaT) * K2_Pos) * deltaT;
+    float3 K4_Pos = ((p) + deltaT * K3_Pos) * deltaT;
+    v = v + deltaT * ((K1_Vel + (2 * K2_Vel) + (2 * K3_Vel) + K4_Vel) / 6);
+    p = p + deltaT * ((K1_Pos + (2 * K2_Pos) + (2 * K3_Pos) + K4_Pos) / 6);
+    //*/
+
+	if (p.y < boundary) {
+		v.y = v.y*-0.9f;
+		p.y = boundary;
+		//xv = 0.1;
+    }
+
+    //collision from box
+    float boxScale = 2.5f;
+    if (p.x < -1*boxScale)
     {
-        float3 f = value[id.x].pos - sphere1.xyz;
-        value[id.x].vel = normalize(normalize(float4(f, 1.0f)) + value[id.x].vel);
+        v.x = v.x * -0.9f;
+        p.x = -1 * boxScale;
+    }
+    if (p.x > 1 * boxScale)
+    {
+        v.x = v.x * -0.9f;
+        p.x = 1 * boxScale;
+    }
+    if (p.z < -1 * boxScale)
+    {
+        v.z = v.z * -0.9f;
+        p.z = -1 * boxScale;
+    }
+    if (p.z > 1 * boxScale)
+    {
+        v.z = v.z * -0.9f;
+        p.z = 1 * boxScale;
+    }
+
+    value[id.x].vel = v;
+    value[id.x].pos = p;
+    
+
+    if (distance(value[id.x].pos, float3(sphere1)) < 0.5f)
+    {
+        float3 dir = value[id.x].pos - sphere1;
+        value[id.x].vel = normalize(float4(dir, 0.0f)).xyz * length(v) * 0.9f;
     }
 }

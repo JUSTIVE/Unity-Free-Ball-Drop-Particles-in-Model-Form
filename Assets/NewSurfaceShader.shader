@@ -15,6 +15,7 @@ Shader "Custom/NewSurfaceShader"
 			struct Point {
 				float3 pos;
 				float3 vel;
+				float mass;
 			};
 			struct v2f {
 				float4 pos : SV_POSITION;

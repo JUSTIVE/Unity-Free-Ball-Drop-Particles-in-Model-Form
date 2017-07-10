@@ -10,11 +10,11 @@ public class isMyball : MonoBehaviour
     {
         public Vector3 pos;
         public Vector3 vel;
+        public float mass;
     };
     public Camera cam;
     public enum MODE { SQUARE, BUNNY, REFERENCE,ARMA, DINO};
     public MODE mode;
-    public Text text;
     public Shader rainbowShader;
     public Shader whiteShader;
     data[] value;
@@ -26,8 +26,8 @@ public class isMyball : MonoBehaviour
     private int particleSize;
     private int masterCount;
     private double dts;
-    public int index;
     public bool isText = false;
+    public int squareIndex;
     private int[] mapper = { 32, 64, 128, 256, 512, 1024, 2048 };
 
 
@@ -45,8 +45,8 @@ public class isMyball : MonoBehaviour
     }
     void initSquare()
     {
-        width = mapper[index];
-        height = mapper[index];
+        width = mapper[squareIndex];
+        height = mapper[squareIndex];
         depth = 1;
         particleSize = width * height * depth;
         value = new data[particleSize];
@@ -65,6 +65,7 @@ public class isMyball : MonoBehaviour
                     value[i * height + j].pos.x = (dx * i) - 0.25f;
                     value[i * height + j].pos.y = dy * j + Random.Range(0, 0);
                     value[i * height + j].pos.z = k * dz;
+                    value[i * height + j].mass = 1.0f;
                 }
             }
         }
@@ -97,9 +98,11 @@ public class isMyball : MonoBehaviour
             //value[i].pos.y = gb.transform.position.x;
             //value[i].pos.z = gb.transform.position.x;
             value[i].pos = Quaternion.Euler(225.0f, 200.0f, 0.0f) * value[i].pos;
+            value[i].mass = 1.0f;
         }
+        
         //Debug.Log(gb.transform.position.x);
-        Debug.Log(value[0].pos.x + " " + value[0].pos.y + " " + value[0].pos.z);
+        //Debug.Log(value[0].pos.x + " " + value[0].pos.y + " " + value[0].pos.z);
     }
     void initDino()
     {
@@ -117,13 +120,14 @@ public class isMyball : MonoBehaviour
             tempArr = temp.Split(new char[] { ' ' });
 
             value[i].pos.x = float.Parse(tempArr[1]) / scaler;
-            value[i].pos.y = float.Parse(tempArr[2]) / scaler-1.2f;
+            value[i].pos.y = float.Parse(tempArr[2]) / scaler-2.5f;
             value[i].pos.z = float.Parse(tempArr[3]) / scaler;
             //gb.transform.position.Set(value[i].pos.x,
             //    value[i].pos.y,
             //    value[i].pos.z);
             //gb.transform.Rotate(new Vector3(1, 1, 0), 45);
             //value[i].pos = Quaternion.Euler(225.0f, 200.0f, 0.0f) * value[i].pos;
+            value[i].mass = 1.0f;
         }
         //Debug.Log(gb.transform.position.x);
         
@@ -156,6 +160,7 @@ public class isMyball : MonoBehaviour
             //value[i].pos.y = gb.transform.position.x;
             //value[i].pos.z = gb.transform.position.x;
             value[i].pos = Quaternion.Euler(225.0f, 200.0f, 0.0f) * value[i].pos;
+            value[i].mass = 1.0f;
         }
         //Debug.Log(gb.transform.position.x);
         Debug.Log(value[0].pos.x + " " + value[0].pos.y + " " + value[0].pos.z);
@@ -169,11 +174,6 @@ public class isMyball : MonoBehaviour
     {
         
         initCam();
-        if (isText)
-            text.text = mapper[index] + "\n";
-        //frame
-        dts = 0;
-        masterCount = 0;
         //other
         switch (mode)
         {
@@ -205,7 +205,7 @@ public class isMyball : MonoBehaviour
         }
         
         Debug.Log("particleSize = "+particleSize);
-        cBuff = new ComputeBuffer(particleSize, 24);
+        cBuff = new ComputeBuffer(particleSize, 28);
         mat.SetFloat("x", (float)width);
         mat.SetFloat("y", (float)height);
         mat.SetFloat("z", (float)width);
@@ -214,55 +214,38 @@ public class isMyball : MonoBehaviour
         cBuff.SetData(value);
         mat.SetBuffer("value", cBuff);
         cShader.SetBuffer(kernelHandle, "value", cBuff);
-        cShader.SetVector("sphere1",new Vector4(0,-1.1f,0.21f,0.0f));
+        cShader.SetVector("sphere1",new Vector4(0,-1.0f,0.0f,0.0f));
     }
     
     private void OnPostRender()
     {
         mat.SetPass(0);
         //mat.SetBuffer("value", cBuff);
-        Graphics.DrawProcedural(MeshTopology.Points, particleSize, 1);
+        Graphics.DrawProcedural(MeshTopology.Points, particleSize*2, 1);
     }
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
+        cShader.SetFloat("deltaT", Time.deltaTime);
+        
         switch (mode)
         {
             case MODE.SQUARE:
-                cShader.Dispatch(kernelHandle, particleSize / 6, 1, 1);
+                //for(int i=0;i<100;i++)
+                    cShader.Dispatch(kernelHandle, particleSize / 6, 1, 1);
                 break;
             case MODE.BUNNY:
-                cShader.Dispatch(kernelHandle, particleSize / 6, 1, 1);
+                //for (int i = 0; i < 100; i++)
+                    cShader.Dispatch(kernelHandle, particleSize / 6, 1, 1);
                 break;
             case MODE.ARMA:
-                cShader.Dispatch(kernelHandle, particleSize / 6, 1, 1);
+                //for (int i = 0; i < 100; i++)
+                    cShader.Dispatch(kernelHandle, particleSize / 6, 1, 1);
                 break;
             case MODE.DINO:
-                cShader.Dispatch(kernelHandle, particleSize / 6, 1, 1);
+                //for (int i = 0; i < 100; i++)
+                    cShader.Dispatch(kernelHandle, particleSize / 6, 1, 1);
                 break;
         }
-        
-        //for frame
-        masterCount++;
-        dts += (1 / Time.deltaTime);
-        if (masterCount <= 2001)
-            if (masterCount % 200 == 0)
-            {
-                if (isText)
-                    text.text += dts / 200.0 + "\n";
-                dts = 0;
-            }
-        //if (Input.GetMouseButtonDown(0))
-        //{
-        //    index = index > 5 ? 0 : index + 1;
-        //    init();
-        //}
-        cBuff.GetData(value);
-        //GameObject gb = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        //gb.transform.position.Set(value[0].pos.x, value[0].pos.y, value[0].pos.z);
-        //gb.transform.lossyScale.Set(0.01f, 0.01f, 0.01f);
-        //gb = null;
-        Debug.Log(value[0].pos.x + " " + value[0].pos.y + " " + value[0].pos.z+"\n");
-        //Debug.Log()
     }
 }
