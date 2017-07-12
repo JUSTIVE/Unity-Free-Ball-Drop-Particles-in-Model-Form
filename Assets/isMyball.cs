@@ -12,22 +12,24 @@ public class isMyball : MonoBehaviour
         public Vector3 vel;
         public float mass;
     };
+
     public Camera cam;
     public enum MODE { SQUARE, BUNNY, REFERENCE,ARMA, DINO};
     public MODE mode;
     public Shader rainbowShader;
     public Shader whiteShader;
-    data[] value;
-    private ComputeBuffer cBuff = null;
     public ComputeShader cShader;
+    public int squareIndex;
+    public GameObject sphere;
+    private data[] value;
     private Material mat;
+    private ComputeBuffer cBuff = null;
     private int kernelHandle;
     private int width, height, depth;
     private int particleSize;
     private int masterCount;
     private double dts;
-    public bool isText = false;
-    public int squareIndex;
+    
     private int[] mapper = { 32, 64, 128, 256, 512, 1024, 2048 };
 
 
@@ -214,7 +216,7 @@ public class isMyball : MonoBehaviour
         cBuff.SetData(value);
         mat.SetBuffer("value", cBuff);
         cShader.SetBuffer(kernelHandle, "value", cBuff);
-        cShader.SetVector("sphere1",new Vector4(0,-1.0f,0.0f,0.0f));
+        cShader.SetVector("sphere1",sphere.transform.position);
     }
     
     private void OnPostRender()
