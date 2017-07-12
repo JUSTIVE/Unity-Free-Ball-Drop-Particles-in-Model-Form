@@ -49,7 +49,7 @@ public class isMyball : MonoBehaviour
     {
         width = mapper[squareIndex];
         height = mapper[squareIndex];
-        depth = 1;
+        depth = mapper[squareIndex];
         particleSize = width * height * depth;
         value = new data[particleSize];
         for (int i = 0; i < particleSize; i++)
@@ -57,21 +57,20 @@ public class isMyball : MonoBehaviour
             value[i].pos = new Vector3(0, 0, 0);
             value[i].vel = new Vector3(0, 0, 0);
         }
-        float dx = 1.0f / (2.0f * width), dy = 1.0f / (1.0f * height), dz = 1.0f / depth;
+        float dx = 1.0f / (1.0f * width), dy = 1.0f / (1.0f * height), dz = 1.0f / depth;
         for (int i = 0; i < width; i++)
         {
             for (int j = 0; j < height; j++)
             {
                 for (int k = 0; k < depth; k++)
                 {
-                    value[i * height + j].pos.x = (dx * i) - 0.25f;
-                    value[i * height + j].pos.y = dy * j + Random.Range(0, 0);
-                    value[i * height + j].pos.z = k * dz;
-                    value[i * height + j].mass = 1.0f;
+                    value[i * height + j + (width * height) * k].pos.x = (dx * i) - 0.5f;
+                    value[i * height + j + (width * height) * k].pos.y = dy * j;
+                    value[i * height + j + (width * height) * k].pos.z = k * dz-0.5f;
+                    value[i * height + j + (width * height) * k].mass = 1.0f;
                 }
             }
         }
-        Debug.Log(value[0].pos.x+" "+value[0].pos.y+" "+value[0].pos.z);
     }
     void initBunny()
     {
@@ -234,7 +233,7 @@ public class isMyball : MonoBehaviour
         {
             case MODE.SQUARE:
                 //for(int i=0;i<100;i++)
-                    cShader.Dispatch(kernelHandle, particleSize / 6, 1, 1);
+                    cShader.Dispatch(kernelHandle, particleSize / 8, 1, 1);
                 break;
             case MODE.BUNNY:
                 //for (int i = 0; i < 100; i++)
