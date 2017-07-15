@@ -33,7 +33,7 @@ public class framecounter : MonoBehaviour
         fpsSum += 1.0f / (Time.deltaTime);
         if (frameNum > 200)
         {
-            if (frameStep < 10)
+            if (frameStep < 100)
             {
                 if (text != null)
                 {

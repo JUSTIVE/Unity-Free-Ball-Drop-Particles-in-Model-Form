@@ -25,7 +25,7 @@ void CSMain (uint3 id : SV_DispatchThreadID)
 
 	float3 p = value[id.x].pos;
 	float3 v = value[id.x].vel;
-	
+    float radius = 1.0f;
 
     float3 acc= gravity/value[id.x].mass;
 	//update velocity 
@@ -37,15 +37,15 @@ void CSMain (uint3 id : SV_DispatchThreadID)
     // in forth Runge-Kutta
     
     float3 K1_Vel = gravity;//t0의 가속도
-    float3 K2_Vel = ((0.5f * deltaT) * K1_Vel) * deltaT; //1/2dt 의 가속도
-    float3 K3_Vel = ((0.5f * deltaT) * K2_Vel) * deltaT;
-    float3 K4_Vel = (deltaT * K3_Vel) * deltaT;
-    
+    float3 K2_Vel = gravity; //1/2dt 의 가속도
+    float3 K3_Vel = gravity;
+    float3 K4_Vel = gravity;
+    v = v + deltaT * ((K1_Vel + (2 * K2_Vel) + (2 * K3_Vel) + K4_Vel) / 6);
     float3 K1_Pos = v;
     float3 K2_Pos = ((0.5f * deltaT) * K1_Pos) * deltaT;
     float3 K3_Pos = ((0.5f * deltaT) * K2_Pos) * deltaT;
     float3 K4_Pos = ((p) + deltaT * K3_Pos) * deltaT;
-    v = v + deltaT * ((K1_Vel + (2 * K2_Vel) + (2 * K3_Vel) + K4_Vel) / 6);
+    
     p = p + deltaT * ((K1_Pos + (2 * K2_Pos) + (2 * K3_Pos) + K4_Pos) / 6);
 
     //*/
@@ -82,8 +82,8 @@ void CSMain (uint3 id : SV_DispatchThreadID)
     value[id.x].vel = v;
     value[id.x].pos = p;
     
-
-    if (distance(value[id.x].pos, float3(sphere1)) < 1.0f)
+    
+    if (distance(value[id.x].pos, float3(sphere1)) < radius)
     {
         float3 temppos = (value[id.x].pos- p) / 2 + p;
         float tempdist = distance(temppos, sphere1);
@@ -91,11 +91,11 @@ void CSMain (uint3 id : SV_DispatchThreadID)
         float3 right = value[id.x].pos;
         for (int i = 0; i < 100; i++)
         {
-            if (tempdist == 1.0f)
+            if (tempdist == radius)
             {
                 break;
             }
-            else if (tempdist > 1.0f)
+            else if (tempdist > radius)
             {
                 right = temppos;
                 temppos = (temppos - left) / 2 + p;
@@ -112,7 +112,7 @@ void CSMain (uint3 id : SV_DispatchThreadID)
         float3 tempdir = temppos - sphere1;
 
         //value[id.x].pos = temppos;
-        value[id.x].pos = normalize(tempdir) * 1.0f + sphere1;
+        value[id.x].pos = normalize(tempdir) * radius + sphere1;
         float3 dir = value[id.x].pos - sphere1;
         float3 n = normalize(dir);
         value[id.x].vel = (value[id.x].vel - 2 * (dot(value[id.x].vel, n)) * n)*0.9f;

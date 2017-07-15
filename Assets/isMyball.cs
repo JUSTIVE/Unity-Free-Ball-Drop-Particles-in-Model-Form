@@ -14,7 +14,7 @@ public class isMyball : MonoBehaviour
     };
 
     public Camera cam;
-    public enum MODE { SQUARE, BUNNY, REFERENCE,ARMA, DINO};
+    public enum MODE { SQUARE, BUNNY, BUDDHA,ARMA, DINO, A, O};
     public MODE mode;
     public Shader rainbowShader;
     public Shader whiteShader;
@@ -90,15 +90,16 @@ public class isMyball : MonoBehaviour
             value[i].pos.x = float.Parse(tempArr[1]) / scaler;
             value[i].pos.y = float.Parse(tempArr[2]) / scaler;
             value[i].pos.z = float.Parse(tempArr[3]) / scaler;
-            gb.transform.position.Set(value[i].pos.x,
-                value[i].pos.y,
-                value[i].pos.z);
-            gb.transform.Rotate(new Vector3(1, 1, 0), 45);
+            value[i].pos.y += 1.0f;
+            //gb.transform.position.Set(value[i].pos.x,
+            //    value[i].pos.y,
+            //    value[i].pos.z);
+            //gb.transform.Rotate(new Vector3(1, 1, 0), 45);
 
             //value[i].pos.x = gb.transform.position.x;
             //value[i].pos.y = gb.transform.position.x;
             //value[i].pos.z = gb.transform.position.x;
-            value[i].pos = Quaternion.Euler(225.0f, 200.0f, 0.0f) * value[i].pos;
+            //value[i].pos = Quaternion.Euler(225.0f, 200.0f, 0.0f) * value[i].pos;
             value[i].mass = 1.0f;
         }
         
@@ -121,7 +122,7 @@ public class isMyball : MonoBehaviour
             tempArr = temp.Split(new char[] { ' ' });
 
             value[i].pos.x = float.Parse(tempArr[1]) / scaler;
-            value[i].pos.y = float.Parse(tempArr[2]) / scaler-2.5f;
+            value[i].pos.y = float.Parse(tempArr[2]) / scaler;
             value[i].pos.z = float.Parse(tempArr[3]) / scaler;
             //gb.transform.position.Set(value[i].pos.x,
             //    value[i].pos.y,
@@ -133,10 +134,10 @@ public class isMyball : MonoBehaviour
         //Debug.Log(gb.transform.position.x);
         
         Debug.Log(value[0].pos.x + " " + value[0].pos.y + " " + value[0].pos.z);
-    } 
+    }
     void initArma()
     {
-        StreamReader sr = new StreamReader("Assets/arma.txt");
+        StreamReader sr = new StreamReader("Assets/armadilo.txt");
         string temp = sr.ReadLine();
         string[] tempArr = temp.Split(new char[] { ' ' });
 
@@ -149,9 +150,9 @@ public class isMyball : MonoBehaviour
             temp = sr.ReadLine();
             tempArr = temp.Split(new char[] { ' ' });
 
-            value[i].pos.x = float.Parse(tempArr[1]) / scaler;
-            value[i].pos.y = float.Parse(tempArr[2]) / scaler;
-            value[i].pos.z = float.Parse(tempArr[3]) / scaler;
+            value[i].pos.x = float.Parse(tempArr[2]) / scaler;
+            value[i].pos.y = float.Parse(tempArr[3]) / scaler;
+            value[i].pos.z = float.Parse(tempArr[4]) / scaler;
             gb.transform.position.Set(value[i].pos.x,
                 value[i].pos.y,
                 value[i].pos.z);
@@ -165,7 +166,104 @@ public class isMyball : MonoBehaviour
         }
         //Debug.Log(gb.transform.position.x);
         Debug.Log(value[0].pos.x + " " + value[0].pos.y + " " + value[0].pos.z);
-    } 
+    }
+    void initBuddha()
+    {
+        StreamReader sr = new StreamReader("Assets/buddha.txt");
+        string temp = sr.ReadLine();
+        string[] tempArr = temp.Split(new char[] { ' ' });
+
+        GameObject gb = new GameObject();
+        int dummy;
+        
+        particleSize = int.Parse(tempArr[0]);
+        dummy = int.Parse(tempArr[1]);
+        dummy = int.Parse(tempArr[2]);
+        dummy = int.Parse(tempArr[3]);
+        value = new data[particleSize];
+        for (int i = 0; i < particleSize; i++)
+        {
+            temp = sr.ReadLine();
+            tempArr = temp.Split(new char[] {' ',' '});
+
+            value[i].pos.x = (float)double.Parse(tempArr[1]) / scaler;
+            value[i].pos.y = (float)double.Parse(tempArr[2]) / scaler;
+            value[i].pos.z = (float)double.Parse(tempArr[3]) / scaler;
+            //float.TryParse(tempArr[1], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.CreateSpecificCulture("ko-KR"),out value[i].pos.x);
+            //float.TryParse(tempArr[2], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.CreateSpecificCulture("ko-KR"), out value[i].pos.y);
+            //float.TryParse(tempArr[3], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.CreateSpecificCulture("ko-KR"), out value[i].pos.z);
+
+            //value[i].pos.x /= scaler;
+            //value[i].pos.y /= scaler;
+            //value[i].pos.z /= scaler;
+            //gb.transform.position.Set(value[i].pos.x,value[i].pos.y,value[i].pos.z);
+            //gb.transform.Rotate(new Vector3(1, 1, 0), 45);
+
+            //value[i].pos.x = gb.transform.position.x;
+            //value[i].pos.y = gb.transform.position.x;
+            //value[i].pos.z = gb.transform.position.x;
+            //value[i].pos = Quaternion.Euler(225.0f, 200.0f, 0.0f) * value[i].pos;
+            value[i].mass = 1.0f;
+        }
+        //Debug.Log(gb.transform.position.x);
+        Debug.Log(value[0].pos.x + " " + value[0].pos.y + " " + value[0].pos.z);
+    }
+    void initA()
+    {
+        StreamReader sr = new StreamReader("Assets/A.txt");
+        string temp = sr.ReadLine();
+        string[] tempArr = temp.Split(new char[] { ' ' });
+
+        GameObject gb = new GameObject();
+        int dummy;
+
+        particleSize = int.Parse(tempArr[0]);
+        dummy = int.Parse(tempArr[1]);
+        dummy = int.Parse(tempArr[2]);
+        dummy = int.Parse(tempArr[3]);
+        value = new data[particleSize];
+        //Debug.Log("particleSize = " + particleSize);
+        for (int i = 0; i < particleSize; i++)
+        {
+            temp = sr.ReadLine();
+            tempArr = temp.Split(new char[] { ' '});
+            //Debug.Log("data= " + tempArr[2]);
+            value[i].pos.x = float.Parse(tempArr[2]) / scaler;
+            value[i].pos.y = float.Parse(tempArr[3]) / scaler;
+            value[i].pos.z = float.Parse(tempArr[4]) / scaler;
+            value[i].mass = 1.0f;
+        }
+        //Debug.Log(gb.transform.position.x);
+        Debug.Log(value[0].pos.x + " " + value[0].pos.y + " " + value[0].pos.z);
+    }
+    void initO()
+    {
+        StreamReader sr = new StreamReader("Assets/O.txt");
+        string temp = sr.ReadLine();
+        string[] tempArr = temp.Split(new char[] { ' ' });
+
+        GameObject gb = new GameObject();
+        int dummy;
+
+        particleSize = int.Parse(tempArr[0]);
+        dummy = int.Parse(tempArr[1]);
+        dummy = int.Parse(tempArr[2]);
+        dummy = int.Parse(tempArr[3]);
+        value = new data[particleSize];
+        //Debug.Log("particleSize = " + particleSize);
+        for (int i = 0; i < particleSize; i++)
+        {
+            temp = sr.ReadLine();
+            tempArr = temp.Split(new char[] { ' ' });
+            //Debug.Log("data= " + tempArr[2]);
+            value[i].pos.x = float.Parse(tempArr[2]) / scaler;
+            value[i].pos.y = float.Parse(tempArr[3]) / scaler;
+            value[i].pos.z = float.Parse(tempArr[4]) / scaler;
+            value[i].mass = 1.0f;
+        }
+        //Debug.Log(gb.transform.position.x);
+        Debug.Log(value[0].pos.x + " " + value[0].pos.y + " " + value[0].pos.z);
+    }
     void initCam()
     {
         //cam.transform.position = new Vector3(3, 2, 5);
@@ -173,31 +271,38 @@ public class isMyball : MonoBehaviour
     }
     void init()
     {
-        
         initCam();
         //other
+        mat = new Material(rainbowShader);
         switch (mode)
         {
             case MODE.SQUARE:
-                mat = new Material(rainbowShader);
+                
                 initSquare();
                 break;
             case MODE.BUNNY:
-                mat = new Material(rainbowShader);
                 scaler = 20.0f;
                 initBunny();
                 break;
-            case MODE.REFERENCE:
+            case MODE.BUDDHA:
+                scaler = 0.05f;
+                initBuddha();
                 break;
             case MODE.ARMA:
-                mat = new Material(rainbowShader);
                 scaler = 1.0f;
                 initArma();
                 break;
             case MODE.DINO:
-                mat = new Material(rainbowShader);
                 scaler = 50.0f;
                 initDino();
+                break;
+            case MODE.A:
+                scaler = 50.0f;
+                initA();
+                break;
+            case MODE.O:
+                scaler = 50.0f;
+                initO();
                 break;
         }
         if (cBuff != null)
@@ -225,7 +330,7 @@ public class isMyball : MonoBehaviour
         Graphics.DrawProcedural(MeshTopology.Points, particleSize*2, 1);
     }
     // Update is called once per frame
-    void FixedUpdate()
+    void Update()
     {
         cShader.SetFloat("deltaT", Time.deltaTime);
         
@@ -237,16 +342,25 @@ public class isMyball : MonoBehaviour
                 break;
             case MODE.BUNNY:
                 //for (int i = 0; i < 100; i++)
-                    cShader.Dispatch(kernelHandle, particleSize / 6, 1, 1);
+                    cShader.Dispatch(kernelHandle, particleSize / 8, 1, 1);
+                break;
+            case MODE.BUDDHA:
+                //for (int i = 0; i < 100; i++)
+                cShader.Dispatch(kernelHandle, particleSize / 8, 1, 1);
                 break;
             case MODE.ARMA:
                 //for (int i = 0; i < 100; i++)
-                    cShader.Dispatch(kernelHandle, particleSize / 6, 1, 1);
+                    cShader.Dispatch(kernelHandle, particleSize / 8, 1, 1);
                 break;
             case MODE.DINO:
                 //for (int i = 0; i < 100; i++)
-                    cShader.Dispatch(kernelHandle, particleSize / 6, 1, 1);
+                    cShader.Dispatch(kernelHandle, particleSize / 8, 1, 1);
+                break;
+            case MODE.A:
+            case MODE.O:
+                cShader.Dispatch(kernelHandle, particleSize / 8, 1, 1);
                 break;
         }
     }
 }
+
