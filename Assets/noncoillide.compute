@@ -1,0 +1,86 @@
+﻿// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel CSMain
+
+struct data
+{
+    float3 pos;
+    float3 vel;
+    float mass;
+};
+
+RWStructuredBuffer<data> value;
+
+float3 sphere1;
+//local workgroup size
+float deltaT;
+
+
+[numthreads(8,1,1)]
+void CSMain (uint3 id : SV_DispatchThreadID)
+{
+	// TODO: insert actual code here!
+    float boundary = -0.995f;
+    float3 force;
+    float3 gravity = float3(0, -9.81f, 0);
+
+    float3 p = value[id.x].pos;
+    float3 v = value[id.x].vel;
+    float radius = 1.0f;
+
+    float3 acc = gravity / value[id.x].mass;
+	//update velocity 
+    //Implicit Euler
+    /*
+    v += acc* deltaT;
+	p += (v*deltaT);
+    /*/
+    // in forth Runge-Kutta
+    
+    float3 K1_Vel = gravity; //t0의 가속도
+    float3 K2_Vel = gravity; //1/2dt 의 가속도
+    float3 K3_Vel = gravity;
+    float3 K4_Vel = gravity;
+    v = v + deltaT * ((K1_Vel + (2 * K2_Vel) + (2 * K3_Vel) + K4_Vel) / 6);
+    float3 K1_Pos = v;
+    float3 K2_Pos = ((0.5f * deltaT) * K1_Pos) * deltaT;
+    float3 K3_Pos = ((0.5f * deltaT) * K2_Pos) * deltaT;
+    float3 K4_Pos = ((p) + deltaT * K3_Pos) * deltaT;
+    
+    p = p + deltaT * ((K1_Pos + (2 * K2_Pos) + (2 * K3_Pos) + K4_Pos) / 6);
+
+    //*/
+
+    if (p.y < boundary)
+    {
+        v.y = v.y * -0.9f;
+        p.y = boundary;
+		//xv = 0.1;
+    }
+
+    //collision from box
+    float boxScale = 2.5f;
+    if (p.x < -1 * boxScale)
+    {
+        v.x = v.x * -0.9f;
+        p.x = -1 * boxScale;
+    }
+    if (p.x > 1 * boxScale)
+    {
+        v.x = v.x * -0.9f;
+        p.x = 1 * boxScale;
+    }
+    if (p.z < -1 * boxScale)
+    {
+        v.z = v.z * -0.9f;
+        p.z = -1 * boxScale;
+    }
+    if (p.z > 1 * boxScale)
+    {
+        v.z = v.z * -0.9f;
+        p.z = 1 * boxScale;
+    }
+
+    value[id.x].vel = v;
+    value[id.x].pos = p;
+    
+}

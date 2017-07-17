@@ -10,7 +10,7 @@ public class stopper : MonoBehaviour {
     void Start()
     {
         frame = 0;
-    }
+    }   
 
     // Update is called once per frame
     void Update()

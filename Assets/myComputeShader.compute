@@ -1,18 +1,13 @@
 ﻿// Each #kernel tells which function to compile; you can have many kernels
 #pragma kernel CSMain
-// Create a RenderTexture with enableRandomWrite flag and set it
-// with cs.SetTexture
+
 struct data{
 	float3 pos;
 	float3 vel;
     float mass;
 };
-
-//shareing buffer variables 
 RWStructuredBuffer<data> value;
-
 float3 sphere1;
-//local workgroup size
 float deltaT;
 
 [numthreads(8,1,1)]

@@ -124,6 +124,7 @@ public class isMyball : MonoBehaviour
             value[i].pos.x = float.Parse(tempArr[1]) / scaler;
             value[i].pos.y = float.Parse(tempArr[2]) / scaler;
             value[i].pos.z = float.Parse(tempArr[3]) / scaler;
+            value[i].pos.y -= 2.0f;
             //gb.transform.position.Set(value[i].pos.x,
             //    value[i].pos.y,
             //    value[i].pos.z);
@@ -139,6 +140,8 @@ public class isMyball : MonoBehaviour
     {
         StreamReader sr = new StreamReader("Assets/armadilo.txt");
         string temp = sr.ReadLine();
+        temp.Trim();
+        
         string[] tempArr = temp.Split(new char[] { ' ' });
 
         GameObject gb = new GameObject();
@@ -147,12 +150,17 @@ public class isMyball : MonoBehaviour
         value = new data[particleSize];
         for (int i = 0; i < particleSize; i++)
         {
-            temp = sr.ReadLine();
-            tempArr = temp.Split(new char[] { ' ' });
 
-            value[i].pos.x = float.Parse(tempArr[2]) / scaler;
-            value[i].pos.y = float.Parse(tempArr[3]) / scaler;
-            value[i].pos.z = float.Parse(tempArr[4]) / scaler;
+            temp = sr.ReadLine();
+            temp =temp.Trim();
+            tempArr = temp.Split(new char[] { ' ' });
+            //for(int j=0;j<tempArr.Length;j++)
+            //{
+            //    Debug.Log("index"+j+"="+tempArr[j]);
+            //}
+            value[i].pos.x = float.Parse(tempArr[4]) / scaler;
+            value[i].pos.y = float.Parse(tempArr[6]) / scaler;
+            value[i].pos.z = float.Parse(tempArr[8]) / scaler;
             gb.transform.position.Set(value[i].pos.x,
                 value[i].pos.y,
                 value[i].pos.z);
@@ -161,7 +169,8 @@ public class isMyball : MonoBehaviour
             //value[i].pos.x = gb.transform.position.x;
             //value[i].pos.y = gb.transform.position.x;
             //value[i].pos.z = gb.transform.position.x;
-            value[i].pos = Quaternion.Euler(225.0f, 200.0f, 0.0f) * value[i].pos;
+            //value[i].pos = Quaternion.Euler(225.0f, 200.0f, 135.0f) * value[i].pos;
+            
             value[i].mass = 1.0f;
         }
         //Debug.Log(gb.transform.position.x);
@@ -203,6 +212,7 @@ public class isMyball : MonoBehaviour
             //value[i].pos.y = gb.transform.position.x;
             //value[i].pos.z = gb.transform.position.x;
             //value[i].pos = Quaternion.Euler(225.0f, 200.0f, 0.0f) * value[i].pos;
+            
             value[i].mass = 1.0f;
         }
         //Debug.Log(gb.transform.position.x);
@@ -232,6 +242,7 @@ public class isMyball : MonoBehaviour
             value[i].pos.y = float.Parse(tempArr[3]) / scaler;
             value[i].pos.z = float.Parse(tempArr[4]) / scaler;
             value[i].mass = 1.0f;
+            value[i].pos.y -= 0.1f;
         }
         //Debug.Log(gb.transform.position.x);
         Debug.Log(value[0].pos.x + " " + value[0].pos.y + " " + value[0].pos.z);
@@ -289,7 +300,7 @@ public class isMyball : MonoBehaviour
                 initBuddha();
                 break;
             case MODE.ARMA:
-                scaler = 1.0f;
+                scaler = 10.0f;
                 initArma();
                 break;
             case MODE.DINO:
